@@ -1,21 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 	<title>Jcw87's Web Projects</title>
-	<meta name="description" content="Super Mario Bros (World 1) Undertale Genocide Boss Fight (Spoilers)"/>
-</head>
-<body>
-	<h1>Game Clones</h1>
-	<a href="https://tyodr.github.io/c2-smb1/">Super Mario Bros (World 1)</a><br/>
-	<a href="./c2-sans-fight/">Undertale Genocide Boss Fight (Spoilers)</a><br/>
-	<h1>Other Projects</h1>
-	<a href="./ship-shape/">Ship Shape Anxiety Simulator</a><br/>
-	<a href="./analog-clock">Analog Clock</a><br/>
-	<a href="./c2-trace-test">Construct 2 Trace Plugin Test</a>
-	<a href="https://drive.google.com/file/d/0B40Xy8VSKqoOUnRxZ3hyaDlrajQ/view?usp=sharing&resourcekey=0-Vte11xH_fpHOdAytCo6NYg">(capx)</a>
-	<a href="https://drive.google.com/file/d/0B40Xy8VSKqoOTnE3bC1xdlEwVEE/view?usp=sharing&resourcekey=0-iqlE98_7mDhZInXkO63jRg">(plugin)</a><br/>
-	<a href="./webgl"/>WebGL Test</a><br/>
-	<!-- Google tag (gtag.js) -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Kumpulan proyek web Jcw87 termasuk klon game Super Mario Bros, Undertale, dan lainnya."/>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			line-height: 1.6;
+			margin: 0;
+			padding: 20px;
+			background-color: #f4f4f4;
+			color: #333;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 30px auto;
+			padding: 20px;
+			background-color: #fff;
+			box-shadow: 0 0 15px rgba(0,0,0,0.1);
+			border-radius: 8px;
+		}
+
+		h1 {
+			color: #2c3e50; /* Biru tua */
+			text-align: center;
+			margin-bottom: 25px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #3498db; /* Biru muda */
+		}
+
+		h2 {
+			color: #34495e; /* Biru keabu-abuan */
+			margin-top: 30px;
+			margin-bottom: 15px;
+		}
+
+		ul {
+			list-style-type: none;
+			padding: 0;
+		}
+
+		li {
+			margin-bottom: 12px;
+			padding: 12px;
+			background-color: #ecf0f1; /* Abu-abu sangat muda */
+			border-radius: 5px;
+			transition: background-color 0.3s ease;
+		}
+
+		li:hover {
+			background-color: #dde4e6; /* Sedikit lebih gelap saat hover */
+		}
+
+		a {
+			text-decoration: none;
+			color: #3498db; /* Biru muda */
+			font-weight: bold;
+		}
+
+		a:hover {
+			text-decoration: underline;
+			color: #2980b9; /* Biru lebih tua saat hover */
+		}
+
+		/* Styling untuk link sumber (capx, plugin) */
+		.source-link {
+			font-size: 0.9em;
+			font-weight: normal;
+			margin-left: 8px;
+			color: #7f8c8d; /* Abu-abu */
+		}
+
+		.source-link:hover {
+			color: #5e6a6b;
+		}
+
+		footer {
+			text-align: center;
+			margin-top: 40px;
+			padding-top: 20px;
+			border-top: 1px solid #ddd;
+			font-size: 0.9em;
+			color: #777;
+		}
+
+	</style>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-6S9Y2CXQ4H"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -23,5 +95,32 @@
 		gtag('js', new Date());
 		gtag('config', 'G-6S9Y2CXQ4H');
 	</script>
+</head>
+<body>
+	<div class="container">
+		<h1>Jcw87's Web Projects</h1>
+
+		<h2>Game Clones</h2>
+		<ul>
+			<li><a href="https://tyodr.github.io/c2-smb1/" target="_blank" rel="noopener noreferrer">Super Mario Bros (World 1)</a></li>
+			<li><a href="./c2-sans-fight/">Undertale Genocide Boss Fight (Spoilers)</a></li>
+		</ul>
+
+		<h2>Other Projects</h2>
+		<ul>
+			<li><a href="./ship-shape/">Ship Shape Anxiety Simulator</a></li>
+			<li><a href="./analog-clock">Analog Clock</a></li>
+			<li>
+				<a href="./c2-trace-test">Construct 2 Trace Plugin Test</a>
+				<a href="https://drive.google.com/file/d/0B40Xy8VSKqoOUnRxZ3hyaDlrajQ/view?usp=sharing&resourcekey=0-Vte11xH_fpHOdAytCo6NYg" class="source-link" target="_blank" rel="noopener noreferrer">(capx)</a>
+				<a href="https://drive.google.com/file/d/0B40Xy8VSKqoOTnE3bC1xdlEwVEE/view?usp=sharing&resourcekey=0-iqlE98_7mDhZInXkO63jRg" class="source-link" target="_blank" rel="noopener noreferrer">(plugin)</a>
+			</li>
+			<li><a href="./webgl/">WebGL Test</a></li>
+		</ul>
+
+		<footer>
+			<p>&copy; <script>document.write(new Date().getFullYear())</script> Jcw87. All projects are for demonstration purposes.</p>
+		</footer>
+	</div>
 </body>
 </html>
