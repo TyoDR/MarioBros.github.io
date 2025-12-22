@@ -3,112 +3,169 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>Trace Test</title>
-
-    <link rel="manifest" href="appmanifest.json" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui, viewport-fit=cover" />
+    <title>Super Mario Custom Controls</title>
     
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <link rel="apple-touch-icon" sizes="256x256" href="icon-256.png" />
-    <meta name="HandheldFriendly" content="true" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <link rel="shortcut icon" sizes="256x256" href="icon-256.png" />
-
+    
     <style type="text/css">
-        * {
-            padding: 0;
-            margin: 0;
-        }
+        * { padding: 0; margin: 0; user-select: none; -webkit-user-select: none; }
         html, body {
             background: #000;
             color: #fff;
             overflow: hidden;
-            touch-action: none;
-            -ms-touch-action: none;
-            /* Pastikan body memenuhi layar */
             width: 100%;
             height: 100%;
+            touch-action: none; 
         }
-        
-        /* MODIFIKASI 2: PAKSA CANVAS MELAR (FULL SCREEN) */
-        #c2canvasdiv {
+
+        /* 2. PAKSA GAME FULL SCREEN */
+        #c2canvasdiv, canvas {
             width: 100vw !important;
             height: 100vh !important;
             position: absolute;
             top: 0;
             left: 0;
             margin: 0 !important;
+            display: block;
+            image-rendering: pixelated; /* Agar gambar tajam */
         }
 
-        canvas {
-            touch-action-delay: none;
-            touch-action: none;
-            -ms-touch-action: none;
-            
-            /* Paksa ukuran Canvas mengikut div pembungkus */
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-            
-            /* Agar gambar tajam (Pixelated) saat ditarik */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
+        /* 3. DESAIN TOMBOL KONTROL BARU (OVERLAY) */
+        .game-controls {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            height: 150px;
+            z-index: 9999; /* Pastikan di atas game */
+            pointer-events: none; /* Biar area kosong tembus pandang */
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
+
+        .dpad-area {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            pointer-events: auto; /* Area tombol bisa disentuh */
+        }
+
+        .action-area {
+            width: 180px;
+            height: 160px;
+            position: relative;
+            pointer-events: auto;
+        }
+
+        /* Gaya Tombol */
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            position: absolute;
+            border-radius: 50%;
+            backdrop-filter: blur(4px);
+        }
+        .btn:active { background: rgba(255, 255, 255, 0.5); }
+
+        /* Posisi D-PAD (Kiri) */
+        .btn-left { width: 50px; height: 50px; top: 55px; left: 0; }
+        .btn-right { width: 50px; height: 50px; top: 55px; left: 100px; }
+        .btn-up { width: 50px; height: 50px; top: 5px; left: 50px; }
+        .btn-down { width: 50px; height: 50px; top: 105px; left: 50px; }
+
+        /* Posisi ACTION (Kanan - Bawah) */
+        /* Tombol B (Lari/Tembak) */
+        .btn-b { 
+            width: 65px; height: 65px; 
+            bottom: 20px; right: 85px; 
+            background: rgba(255, 0, 0, 0.3); /* Merah transparan */
+        }
+        .btn-b::after { content: "B"; position: absolute; top: 18px; left: 24px; font-weight: bold; font-family: sans-serif;}
+        
+        /* Tombol A (Lompat) */
+        .btn-a { 
+            width: 65px; height: 65px; 
+            bottom: 60px; right: 10px; 
+            background: rgba(0, 255, 0, 0.3); /* Hijau transparan */
+        }
+        .btn-a::after { content: "A"; position: absolute; top: 18px; left: 24px; font-weight: bold; font-family: sans-serif;}
+
     </style>
 </head> 
  
 <body> 
-    <div id="fb-root"></div>
-    
-    <script>
-    (function(){
-        if (window.location.protocol.substr(0, 4) === "file")
-        {
-            alert("Exported games won't work until you upload them. (When running on the file:/// protocol, browsers block many features from working for security reasons.)");
-        }
-    })();
-    </script>
-    
     <div id="c2canvasdiv">
-        <canvas id="c2canvas" width="640" height="480">
-            <h1>Your browser does not appear to support HTML5.  Try upgrading your browser to the latest version.  <a href="http://www.whatbrowser.org">What is a browser?</a>
-            <br/><br/><a href="http://www.microsoft.com/windows/internet-explorer/default.aspx">Microsoft Internet Explorer</a><br/>
-            <a href="http://www.mozilla.com/firefox/">Mozilla Firefox</a><br/>
-            <a href="http://www.google.com/chrome/">Google Chrome</a><br/>
-            <a href="http://www.apple.com/safari/download/">Apple Safari</a><br/>
-            <a href="http://www.google.com/chromeframe">Google Chrome Frame for Internet Explorer</a><br/></h1>
-        </canvas>
+        <canvas id="c2canvas" width="640" height="480"></canvas>
+    </div>
+
+    <div class="game-controls">
+        <div class="dpad-area">
+            <div class="btn btn-up" id="btn-up"></div>
+            <div class="btn btn-left" id="btn-left"></div>
+            <div class="btn btn-right" id="btn-right"></div>
+            <div class="btn btn-down" id="btn-down"></div>
+        </div>
+        
+        <div class="action-area">
+            <div class="btn btn-b" id="btn-b"></div> <div class="btn btn-a" id="btn-a"></div> </div>
     </div>
     
     <script src="jquery-2.1.1.min.js"></script>
     <script src="c2runtime.js"></script>
 
     <script>
-        jQuery(document).ready(function ()
-        {            
+        // --- 5. LOGIKA SAKTI PENGHUBUNG TOMBOL ---
+        
+        // Fungsi untuk menipu game seolah-olah keyboard ditekan
+        function triggerKey(keyCode, type) {
+            var event = document.createEvent("Event");
+            event.initEvent(type, true, true);
+            event.keyCode = keyCode;
+            event.which = keyCode;
+            document.dispatchEvent(event);
+        }
+
+        // Daftar Kode Keyboard (Mapping)
+        // A (Lompat) = Up Arrow (38) + X (88) + Spasi (32) [Ditekan semua biar pasti kena]
+        // B (Lari) = Shift (16) + Z (90) + Ctrl (17)
+        // Arah = Panah (37, 38, 39, 40)
+        
+        function bindTouch(id, keys) {
+            var btn = document.getElementById(id);
+            btn.addEventListener("touchstart", function(e) {
+                e.preventDefault(); 
+                keys.forEach(k => triggerKey(k, "keydown"));
+            });
+            btn.addEventListener("touchend", function(e) {
+                e.preventDefault();
+                keys.forEach(k => triggerKey(k, "keyup"));
+            });
+        }
+
+        // Pasang kabel tombolnya
+        bindTouch("btn-left", [37]); // Panah Kiri
+        bindTouch("btn-right", [39]); // Panah Kanan
+        bindTouch("btn-up", [38]); // Panah Atas (Masuk Pintu)
+        bindTouch("btn-down", [40]); // Panah Bawah (Nunduk)
+        
+        bindTouch("btn-a", [38, 88, 32]); // Tombol A -> Trigger Up+X+Space (Lompat)
+        bindTouch("btn-b", [16, 90, 17]); // Tombol B -> Trigger Shift+Z+Ctrl (Lari/Fire)
+
+        // Start Game
+        jQuery(document).ready(function () {            
             cr_createRuntime("c2canvas");
         });
         
+        // Anti Pause saat pindah tab
         function onVisibilityChanged() {
             if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
                 cr_setSuspended(true);
             else
                 cr_setSuspended(false);
         };
-        
         document.addEventListener("visibilitychange", onVisibilityChanged, false);
-        document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
-        document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
-        document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
-        
-        if (navigator.serviceWorker && navigator.serviceWorker.register)
-        {
-            navigator.serviceWorker.register("sw.js", { scope: "./" });
-        }
     </script>
 </body> 
 </html>
