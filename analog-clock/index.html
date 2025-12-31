@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jam Analog Meteor</title>
+    <style>
+        /* RESET & BASIC SETUP */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Mematikan scroll bar */
+            position: fixed; /* Mengunci posisi body */
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Background Gradasi Langit Malam (Deep Space) */
+            background: linear-gradient(to bottom, #000000 0%, #0f172a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none; /* Mematikan gestur sentuh pada body */
+        }
+
+        /* KANVAS BINTANG (BACKGROUND) */
+        #starCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* Di belakang jam */
+        }
+
+        /* --- STYLE JAM ANALOG (TIDAK BERUBAH) --- */
+        .clock {
+            /* Ukuran Responsif: 350px ATAU 85% lebar layar */
+            width: min(350px, 85vw); 
+            height: min(350px, 85vw);
+            
+            background-color: #e0e5ec;
+            border-radius: 50%;
+            /* Shadow Neomorphism */
+            box-shadow: 
+                20px 20px 60px rgba(0,0,0,0.5), 
+                -20px -20px 60px rgba(255,255,255,0.1),
+                inset 5px 5px 10px #bec3c9,
+                inset -5px -5px 10px #ffffff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 8px solid #333;
+            z-index: 10; /* Di atas canvas bintang */
+        }
+
+        .clock-face {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 50%;
+            background: white;
+            z-index: 1;
+        }
+
+        .marker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 2%;
+            text-align: center;
+        }
+
+        .marker::after {
+            content: '';
+            display: block;
+            margin: 0 auto;
+            background-color: #333;
+        }
+
+        .marker.minute-tick::after { width: 1.5px; height: 6px; background-color: #aaa; }
+        .marker.hour-tick::after { width: 4px; height: 12px; background-color: #000; }
+
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            padding-top: 10%;
+            pointer-events: none;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .hand.hour { width: 6px; height: 25%; background: #333; transform: translateX(-50%); }
+        .hand.minute { width: 4px; height: 35%; background: #333; transform: translateX(-50%); }
+        .hand.second { width: 2px; height: 40%; background: #e74c3c; transform: translateX(-50%); z-index: 11; }
+
+        .center-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border: 2px solid #e74c3c;
+            border-radius: 50%;
+            z-index: 12;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .date-box {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starCanvas"></canvas>
+
+    <div class="clock">
+        <div class="clock-face" id="clockFace">
+            <div class="hand hour" id="hourHand"></div>
+            <div class="hand minute" id="minuteHand"></div>
+            <div class="hand second" id="secondHand"></div>
+            <div class="center-point"></div>
+            <div class="date-box" id="dateBox">--</div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // BAGIAN 1: LOGIKA JAM ANALOG (TETAP SAMA)
+        // ==========================================
+        const clockFace = document.getElementById('clockFace');
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+        const dateBox = document.getElementById('dateBox');
+
+        function createClockFace() {
+            for (let i = 1; i <= 60; i++) {
+                const marker = document.createElement('div');
+                marker.classList.add('marker');
+                if (i % 5 === 0) { marker.classList.add('hour-tick'); } 
+                else { marker.classList.add('minute-tick'); }
+                marker.style.transform = `rotate(${i * 6}deg)`;
+                clockFace.appendChild(marker);
+
+                if (i % 5 === 0) {
+                    const numberDiv = document.createElement('div');
+                    numberDiv.classList.add('number');
+                    numberDiv.style.transform = `rotate(${i * 6}deg)`;
+                    const span = document.createElement('span');
+                    span.innerText = i / 5;
+                    span.style.display = 'block';
+                    span.style.transform = `rotate(-${i * 6}deg)`;
+                    numberDiv.appendChild(span);
+                    clockFace.appendChild(numberDiv);
+                }
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+            
+            const secondsDegrees = ((seconds / 60) * 360);
+            const minutesDegrees = ((minutes / 60) * 360) + ((seconds/60)*6);
+            const hoursDegrees = ((hours / 12) * 360) + ((minutes/60)*30);
+
+            secondHand.style.transform = `translateX(-50%) rotate(${secondsDegrees}deg)`;
+            minuteHand.style.transform = `translateX(-50%) rotate(${minutesDegrees}deg)`;
+            hourHand.style.transform = `translateX(-50%) rotate(${hoursDegrees}deg)`;
+            dateBox.innerText = now.getDate();
+        }
+
+        createClockFace();
+        setInterval(updateClock, 1000);
+        updateClock();
+
+
+        // ==========================================
+        // BAGIAN 2: BACKGROUND METEOR (DIGANTI DARI MATRIX)
+        // ==========================================
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        
+        // Fungsi resize layar (tetap responsif)
+        const resize = () => { 
+            w = canvas.width = window.innerWidth; 
+            h = canvas.height = window.innerHeight; 
+        };
+        window.addEventListener('resize', resize); 
+        resize();
+
+        let stars = [], meteors = [];
+
+        // Class Bintang Diam (Kelap-kelip)
+        class Star {
+            constructor() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 1.5;
+                this.opacity = Math.random();
+                this.speed = Math.random() * 0.02;
+            }
+            update() {
+                this.opacity += this.speed;
+                if(this.opacity > 1 || this.opacity < 0) this.speed = -this.speed;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        // Class Meteor (Bintang Jatuh)
+        class Meteor {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * w + 300; 
+                this.y = Math.random() * -100;    
+                this.len = Math.random() * 80 + 20; 
+                this.speed = Math.random() * 10 + 6;
+                this.size = Math.random() * 2 + 0.5;
+                this.waitTime = new Date().getTime() + Math.random() * 3000; // Muncul tiap 0-3 detik
+                this.active = false;
+            }
+            update() {
+                if (this.active) {
+                    this.x -= this.speed; 
+                    this.y += this.speed; 
+                    
+                    if (this.x < -100 || this.y > h + 100) this.reset();
+                } else {
+                    if (new Date().getTime() > this.waitTime) this.active = true;
+                }
+            }
+            draw() {
+                if (!this.active) return;
+                let gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.len, this.y - this.len);
+                gradient.addColorStop(0, "rgba(255,255,255,1)");
+                gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = this.size;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x + this.len, this.y - this.len);
+                ctx.stroke();
+            }
+        }
+
+        // Inisialisasi Objek
+        for(let i=0; i<150; i++) stars.push(new Star()); // 150 Bintang
+        for(let i=0; i<4; i++) meteors.push(new Meteor()); // 4 Meteor sekaligus
+
+        // Loop Animasi
+        function animate() {
+            ctx.clearRect(0, 0, w, h); // Hapus frame lama
+            
+            // Gambar Bintang
+            stars.forEach(star => { star.update(); star.draw(); });
+            
+            // Gambar Meteor
+            meteors.forEach(meteor => { meteor.update(); meteor.draw(); });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+    </script>
+</body>
+</html>
